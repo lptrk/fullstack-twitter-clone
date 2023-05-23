@@ -5,9 +5,9 @@ interface LayoutProps{
     children: React.ReactNode;
 }
 
-function Layout() {
+const Layout : React.FC<LayoutProps>=({children})=>{
   return (
-    <div>Layout</div>
+    <div className='h-screen bg-black'>{children}</div>
   )
 }
 
