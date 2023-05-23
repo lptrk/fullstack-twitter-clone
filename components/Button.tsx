@@ -44,7 +44,9 @@ ${outline ? "text-white" : ""}
 
 
 `}
-    ></button>
+    >
+      {label}
+    </button>
   );
 };
 
