@@ -3,6 +3,9 @@ import React, { useCallback, useState } from "react";
 import Input from "../Input";
 import Modal from "../Modal";
 import useRegisterModal from "@/hooks/useRegisterModal";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
 const RegisterModal = () => {
   const loginModal = useLoginModal();
@@ -20,22 +23,35 @@ const RegisterModal = () => {
     }
     registerModal.onClose();
     loginModal.onOpen();
-  }, [isLoading,registerModal,loginModal]);
+  }, [isLoading, registerModal, loginModal]);
 
   const onSubmit = useCallback(async () => {
     try {
       setIsLoading(true);
       {
-        /* TODO ADD Register */
+        await axios.post("/api/register", {
+          email,
+          password,
+          username,
+          name,
+        });
       }
+
+      toast.success("Account created.");
+
+      signIn("credentials", {
+        email,
+        password,
+      });
 
       registerModal.onClose();
     } catch (error) {
       console.log(error);
+      toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }
-  }, [registerModal]);
+  }, [registerModal, email, password, username, name]);
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -59,6 +75,7 @@ const RegisterModal = () => {
       />
       <Input
         placeholder="Password"
+        type="password"
         onChange={(e) => setPassword(e.target.value)}
         value={password}
         disabled={isLoading}
@@ -70,7 +87,10 @@ const RegisterModal = () => {
     <div className="text-neutral-400 text-center mt-4">
       <p>
         Already have an Account?
-        <span onClick={onToggle} className="text-white cursor-pointer hover:underline">
+        <span
+          onClick={onToggle}
+          className="text-white cursor-pointer hover:underline"
+        >
           {" "}
           Sign in
         </span>
